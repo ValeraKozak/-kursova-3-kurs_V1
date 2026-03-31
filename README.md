@@ -188,6 +188,7 @@ Authorization: Bearer <token>
 - переглядати баланс
 - отримувати статистику
 - переглядати історію транзакцій
+<img width="812" height="1102" alt="зображення" src="https://github.com/user-attachments/assets/1e61a00a-7c53-4ddc-84b3-95dcf285515b" />
 
 ---
 
