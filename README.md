@@ -75,6 +75,7 @@ Client → Routes → Controllers → Services → Repositories → Database
 - email
 - passwordHash
 - role
+  
   тестові дані:
 <img width="2354" height="168" alt="зображення" src="https://github.com/user-attachments/assets/d968ed33-eb06-4f39-88f0-4eeff10fd942" />
 
@@ -83,6 +84,7 @@ Client → Routes → Controllers → Services → Repositories → Database
 - name
 - type (INCOME / EXPENSE)
 - userId
+  
   тестові дані:
 <img width="1614" height="218" alt="зображення" src="https://github.com/user-attachments/assets/509ffc6e-6bd8-4284-bcce-ac4d3d533d83" />
   
@@ -94,6 +96,7 @@ Client → Routes → Controllers → Services → Repositories → Database
 - date
 - userId
 - categoryId
+  
   тестові дані:
 <img width="2398" height="222" alt="зображення" src="https://github.com/user-attachments/assets/b435cb03-741e-4119-8a96-a922809f819a" />
 
