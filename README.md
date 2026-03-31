@@ -75,13 +75,17 @@ Client → Routes → Controllers → Services → Repositories → Database
 - email
 - passwordHash
 - role
+  тестові дані:
+<img width="2354" height="168" alt="зображення" src="https://github.com/user-attachments/assets/d968ed33-eb06-4f39-88f0-4eeff10fd942" />
 
 ### Category
 - id
 - name
 - type (INCOME / EXPENSE)
 - userId
-
+  тестові дані:
+<img width="1614" height="218" alt="зображення" src="https://github.com/user-attachments/assets/509ffc6e-6bd8-4284-bcce-ac4d3d533d83" />
+  
 ### Transaction
 - id
 - title
@@ -90,6 +94,10 @@ Client → Routes → Controllers → Services → Repositories → Database
 - date
 - userId
 - categoryId
+  тестові дані:
+<img width="2398" height="222" alt="зображення" src="https://github.com/user-attachments/assets/b435cb03-741e-4119-8a96-a922809f819a" />
+
+
 
 ---
 
@@ -141,19 +149,23 @@ npx prisma migrate dev --name init
 #### Backend:
 
 npm run dev
+<img width="594" height="204" alt="зображення" src="https://github.com/user-attachments/assets/4edd9b08-4fa3-4274-9b08-cc41cecab535" />
 
 #### Frontend:
 
 cd frontend
 npm run dev
-
+<img width="590" height="404" alt="зображення" src="https://github.com/user-attachments/assets/6833b971-3561-4852-815d-7773aa1bcfd9" />
 
 ---
 
 ## 🌐 Доступ до застосунку
 
-- Backend: http://localhost:5000  
+- Backend: http://localhost:5000
+  <img width="776" height="262" alt="зображення" src="https://github.com/user-attachments/assets/8c8aa756-35cd-4a08-842a-8e4ad56e0e04" />
+  
 - Frontend: http://localhost:5173  
+<img width="806" height="934" alt="зображення" src="https://github.com/user-attachments/assets/29665f97-9a05-43b1-9c55-50f5c45261a1" />
 
 ---
 
