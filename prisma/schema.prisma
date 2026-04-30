@@ -28,6 +28,7 @@ model User {
 
   categories   Category[]
   transactions Transaction[]
+
 }
 
 model Category {
@@ -59,3 +60,5 @@ model Transaction {
   user        User            @relation(fields: [userId], references: [id], onDelete: Cascade)
   category    Category?       @relation(fields: [categoryId], references: [id], onDelete: SetNull)
 }
+
+

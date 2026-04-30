@@ -61,11 +61,122 @@ function SectionTitle({ icon: Icon, title, subtitle }) {
     </div>
   );
 }
+function ForecastChart({ history, forecast }) {
+  if (!history || history.length === 0) {
+    return (
+      <div className="info-box">
+        <p>Недостатньо даних для побудови графіка.</p>
+      </div>
+    );
+  }
 
+  const incomePoints = history.map((item) => item.income);
+  const expensePoints = history.map((item) => item.expense);
+
+  const incomeSeries = [...incomePoints, forecast.income];
+  const expenseSeries = [...expensePoints, forecast.expense];
+
+  const labels = [...history.map((item) => item.month), 'Forecast'];
+
+  const width = 520;
+  const height = 260;
+  const padding = 32;
+
+  const allValues = [...incomeSeries, ...expenseSeries];
+  const maxValue = Math.max(...allValues, 1);
+
+  const getX = (index, total) => {
+    if (total <= 1) return padding;
+    return padding + (index * (width - padding * 2)) / (total - 1);
+  };
+
+  const getY = (value) => {
+    return height - padding - (value / maxValue) * (height - padding * 2);
+  };
+
+  const buildPath = (series) => {
+    return series
+      .map((value, index) => {
+        const x = getX(index, series.length);
+        const y = getY(value);
+        return `${index === 0 ? 'M' : 'L'} ${x} ${y}`;
+      })
+      .join(' ');
+  };
+
+  const incomePath = buildPath(incomeSeries);
+  const expensePath = buildPath(expenseSeries);
+
+  return (
+    <div className="chart-wrapper">
+      <div className="chart-legend">
+        <span className="legend-item">
+          <span className="legend-dot income-dot"></span>
+          Доходи
+        </span>
+        <span className="legend-item">
+          <span className="legend-dot expense-dot"></span>
+          Витрати
+        </span>
+      </div>
+
+      <svg viewBox={`0 0 ${width} ${height}`} className="forecast-chart">
+        <line x1={padding} y1={height - padding} x2={width - padding} y2={height - padding} className="axis-line" />
+        <line x1={padding} y1={padding} x2={padding} y2={height - padding} className="axis-line" />
+
+        {[0.25, 0.5, 0.75, 1].map((step, i) => {
+          const y = height - padding - step * (height - padding * 2);
+          return (
+            <line
+              key={i}
+              x1={padding}
+              y1={y}
+              x2={width - padding}
+              y2={y}
+              className="grid-line"
+            />
+          );
+        })}
+
+        <path d={incomePath} className="income-line" />
+        <path d={expensePath} className="expense-line" />
+
+        {incomeSeries.map((value, index) => {
+          const x = getX(index, incomeSeries.length);
+          const y = getY(value);
+          return <circle key={`income-${index}`} cx={x} cy={y} r="4" className="income-point" />;
+        })}
+
+        {expenseSeries.map((value, index) => {
+          const x = getX(index, expenseSeries.length);
+          const y = getY(value);
+          return <circle key={`expense-${index}`} cx={x} cy={y} r="4" className="expense-point" />;
+        })}
+
+        {labels.map((label, index) => {
+          const x = getX(index, labels.length);
+          return (
+            <text
+              key={label}
+              x={x}
+              y={height - 10}
+              textAnchor="middle"
+              className="chart-label"
+            >
+              {label}
+            </text>
+          );
+        })}
+      </svg>
+    </div>
+  );
+}
 export default function App() {
   const [activeTab, setActiveTab] = useState('login');
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState('Підключись до API та увійди в систему.');
+  const [forecastModel, setForecastModel] = useState('moving_average');
+const [forecast, setForecast] = useState(null);
 
   const [token, setToken] = useState('');
   const [user, setUser] = useState(null);
@@ -253,6 +364,23 @@ export default function App() {
       setLoading(false);
     }
   }
+  async function loadForecast() {
+  try {
+    setLoading(true);
+
+    const result = await api(
+      `/forecast/month?model=${forecastModel}`,
+      { token }
+    );
+
+    setForecast(result.data);
+    setMessage('Прогноз успішно завантажено.');
+  } catch (error) {
+    setMessage(`Помилка прогнозування: ${error.message}`);
+  } finally {
+    setLoading(false);
+  }
+}
 
   return (
     <div className="app">
@@ -608,7 +736,7 @@ export default function App() {
                       }
                     />
                   </div>
-
+                
                   <button className="primary-btn" onClick={loadStats}>
                     Показати статистику
                   </button>
@@ -631,7 +759,45 @@ export default function App() {
                   </div>
                 )}
               </div>
+              <div className="card">
+                <SectionTitle
+                  icon={BarChart3}
+                  title="Прогноз"
+                  subtitle="Прогноз фінансових показників на наступний місяць"
+                />
 
+                <div className="form-grid">
+                  <div className="field">
+                    <label>Тип прогнозу:</label>
+                    <select
+                      value={forecastModel}
+                      onChange={(e) => setForecastModel(e.target.value)}
+                    >
+                      <option value="moving_average">Середній прогноз</option>
+                      <option value="weighted_moving_average">Прогноз з урахуванням останніх витрат</option>
+                      <option value="exponential_smoothing">Гнучкий прогноз</option>
+                    </select>
+                  </div>
+
+                  <button className="primary-btn" onClick={loadForecast}>
+                    Показати прогноз
+                  </button>
+                </div>
+
+                {forecast && (
+                <>
+                  <div className="info-box">
+                    <p><strong>Модель:</strong> {forecast.model}</p>
+                    <p><strong>Місяців в історії:</strong> {forecast.basedOnMonths}</p>
+                    <p><strong>Прогноз доходів:</strong> {Number(forecast.forecast.income).toFixed(2)} ₴</p>
+                    <p><strong>Прогноз витрат:</strong> {Number(forecast.forecast.expense).toFixed(2)} ₴</p>
+                    <p><strong>Прогноз балансу:</strong> {Number(forecast.forecast.balance).toFixed(2)} ₴</p>
+                  </div>
+
+                  <ForecastChart history={forecast.history} forecast={forecast.forecast} />
+                </>
+)}
+              </div>
               <div className="card">
                 <SectionTitle
                   icon={UserPlus}
